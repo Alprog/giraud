@@ -1,0 +1,29 @@
+<html>
+	<head>
+		<script>
+			function copyToClipboard()
+			{
+				var copyText = document.getElementById("codeInput");
+				copyText.select();
+     			copyText.setSelectionRange(0, 99999);
+				navigator.clipboard.writeText(copyText.value);
+			}
+		</script>
+	</head>
+	<body>
+		<center>
+			<br><br><br>
+			This is your Code:
+			<br><br>
+			<textarea id="codeInput" style="width:400px; height:300px" type="text"></textarea>
+			<br><br>
+			<button onclick="copyToClipboard()">Copy to clipboard</button>
+		</center>
+	</body>
+</html>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    document.getElementById("codeInput").value = code;
+</script>
