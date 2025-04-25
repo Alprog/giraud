@@ -73,14 +73,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)\..\build\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\..\build\obj\$(Configuration)\</IntDir>
-    <IncludePath>3rd-party/SDL2-2.30.4/include;$(IncludePath)</IncludePath>
-    <LibraryPath>3rd-party/SDL2-2.30.4/lib/x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>3rd-party/imgui-docking;$(IncludePath);</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IgnoreImportLibrary />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)\..\build\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\..\build\obj\$(Configuration)\</IntDir>
-    <IncludePath>3rd-party/SDL2-2.30.4/include;$(IncludePath)</IncludePath>
-    <LibraryPath>3rd-party/SDL2-2.30.4/lib/x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>3rd-party/imgui-docking;$(IncludePath);</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <IgnoreImportLibrary />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>3rd-party/SDL3-3.2.10/include;$(IncludePath)</IncludePath>
@@ -126,11 +128,14 @@
       <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <RegisterOutput />
+      <PerUserRedirection />
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -145,16 +150,27 @@
       <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <RegisterOutput />
+      <PerUserRedirection />
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="3rd-party\imgui-docking\backends\imgui_impl_dx12.h" />
+    <ClInclude Include="3rd-party\imgui-docking\backends\imgui_impl_win32.h" />
+    <ClInclude Include="3rd-party\imgui-docking\imconfig.h" />
+    <ClInclude Include="3rd-party\imgui-docking\imgui.h" />
+    <ClInclude Include="3rd-party\imgui-docking\imgui_internal.h" />
+    <ClInclude Include="3rd-party\imgui-docking\imstb_rectpack.h" />
+    <ClInclude Include="3rd-party\imgui-docking\imstb_textedit.h" />
+    <ClInclude Include="3rd-party\imgui-docking\imstb_truetype.h" />
     <ClInclude Include="3rd-party\SDL2-2.30.4\include\begin_code.h" />
     <ClInclude Include="3rd-party\SDL2-2.30.4\include\close_code.h" />
     <ClInclude Include="3rd-party\SDL2-2.30.4\include\SDL.h" />
@@ -320,9 +336,22 @@
     <ClInclude Include="3rd-party\SDL3-3.2.10\include\SDL3\SDL_vulkan.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="3rd-party\imgui-docking\backends\imgui_impl_dx12.cpp" />
+    <ClCompile Include="3rd-party\imgui-docking\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="3rd-party\imgui-docking\imgui.cpp" />
+    <ClCompile Include="3rd-party\imgui-docking\imgui_demo.cpp" />
+    <ClCompile Include="3rd-party\imgui-docking\imgui_draw.cpp" />
+    <ClCompile Include="3rd-party\imgui-docking\imgui_tables.cpp" />
+    <ClCompile Include="3rd-party\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="giraud\app.cpp" />
     <ClCompile Include="giraud\app.ixx" />
     <ClCompile Include="giraud\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="3rd-party\imgui-docking\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="imgui.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
