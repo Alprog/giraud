@@ -268,8 +268,9 @@
     <ClCompile Include="3rd-party\imgui-docking\imgui_draw.cpp" />
     <ClCompile Include="3rd-party\imgui-docking\imgui_tables.cpp" />
     <ClCompile Include="3rd-party\imgui-docking\imgui_widgets.cpp" />
-    <ClCompile Include="giraud\app.cpp" />
-    <ClCompile Include="giraud\app.ixx" />
+    <ClCompile Include="giraud\jira_app.ixx" />
+    <ClCompile Include="giraud\client.cpp" />
+    <ClCompile Include="giraud\client.ixx" />
     <ClCompile Include="giraud\main.cpp" />
     <ClCompile Include="giraud\network.cpp" />
   </ItemGroup>
