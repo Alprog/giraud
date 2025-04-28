@@ -120,9 +120,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			// Initialize Direct3D
 	CreateDeviceD3D(client.window.hwnd);
 
-	// Show the window
-	::ShowWindow(client.window.hwnd, SW_SHOWDEFAULT);
-	::UpdateWindow(client.window.hwnd);
 
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
