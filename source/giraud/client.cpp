@@ -7,6 +7,7 @@ Client& Client::GetInstance()
 }
 
 Client::Client()
+	: window{}
 {
 }
 

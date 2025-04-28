@@ -273,6 +273,7 @@
     <ClCompile Include="giraud\client.ixx" />
     <ClCompile Include="giraud\main.cpp" />
     <ClCompile Include="giraud\network.cpp" />
+    <ClCompile Include="giraud\platform_window.ixx" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="3rd-party\imgui-docking\LICENSE.txt" />

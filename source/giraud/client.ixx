@@ -1,5 +1,7 @@
 export module client;
 
+import platform_window;
+
 export class Client
 {
 public:
@@ -7,6 +9,8 @@ public:
 
 	void RunEventLoop();
 
-private:
+public:
 	Client();
+
+	PlatformWindow window;
 };
