@@ -8,6 +8,7 @@ Client& Client::GetInstance()
 
 Client::Client()
 	: window{}
+	, gfxRenderer{ window }
 {
 }
 
