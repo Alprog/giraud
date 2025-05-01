@@ -1,5 +1,5 @@
 module;
-#include "imgui.h"
+
 #include "backends/imgui_impl_dx12.h"
 #include <d3d12.h>
 #include <dxgi1_4.h>
@@ -17,9 +17,9 @@ export module gfx_renderer;
 
 import platform_window;
 
-constexpr const int NUM_FRAMES_IN_FLIGHT = 2;
-constexpr const int NUM_BACK_BUFFERS = 2;
-constexpr const int SRV_HEAP_SIZE = 64;
+export constexpr const int NUM_FRAMES_IN_FLIGHT = 2;
+export constexpr const int NUM_BACK_BUFFERS = 2;
+export constexpr const int SRV_HEAP_SIZE = 64;
 
 export class GfxRenderer;
 
@@ -103,23 +103,6 @@ public:
     {
 		CleanupDeviceD3D();
     }
-
-	void SetupForImGui()
-	{
-		ImGui_ImplDX12_InitInfo init_info = {};
-		init_info.Device = pd3dDevice;
-		init_info.CommandQueue = pd3dCommandQueue;
-		init_info.NumFramesInFlight = NUM_FRAMES_IN_FLIGHT;
-		init_info.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-		init_info.DSVFormat = DXGI_FORMAT_UNKNOWN;
-		// Allocating SRV descriptors (for textures) is up to the application, so we provide callbacks.
-		// (current version of the backend will only allocate one descriptor, future versions will need to allocate more)
-		init_info.SrvDescriptorHeap = pd3dSrvDescHeap;
-
-		init_info.SrvDescriptorAllocFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle) { return pd3dSrvDescHeapAlloc.Alloc(out_cpu_handle, out_gpu_handle); };
-		init_info.SrvDescriptorFreeFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle) { return pd3dSrvDescHeapAlloc.Free(cpu_handle, gpu_handle); };
-		ImGui_ImplDX12_Init(&init_info);
-	}
 
 	bool CreateDeviceD3D(HWND hWnd)
 	{

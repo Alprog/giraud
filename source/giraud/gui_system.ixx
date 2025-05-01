@@ -14,11 +14,12 @@ public:
         : platformWindow{ platformWindow }
         , gfxRenderer{ gfxRenderer }
     {
-		InitializeImgui();
+		InitializeConfig();
+		InitializeBackends();
     }
 
 private:
-    void InitializeImgui()
+    void InitializeConfig()
     {
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
@@ -43,6 +44,21 @@ private:
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
     }
+
+	void InitializeBackends()
+	{
+		// Setup Platform/Renderer backends
+		ImGui_ImplWin32_Init(platformWindow.hwnd);
+
+		ImGui_ImplDX12_Init(
+			gfxRenderer.pd3dDevice, 
+			NUM_FRAMES_IN_FLIGHT, 
+			DXGI_FORMAT_R8G8B8A8_UNORM,
+			gfxRenderer.pd3dSrvDescHeap, 
+			gfxRenderer.pd3dSrvDescHeap->GetCPUDescriptorHandleForHeapStart(), 
+			gfxRenderer.pd3dSrvDescHeap->GetGPUDescriptorHandleForHeapStart()
+		);
+	}
 
     PlatformWindow& platformWindow;
     GfxRenderer& gfxRenderer;
