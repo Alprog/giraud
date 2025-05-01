@@ -63,18 +63,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// Setup Platform/Renderer backends
 	ImGui_ImplWin32_Init(client.window.hwnd);
 
-	ImGui_ImplDX12_InitInfo init_info = {};
-	init_info.Device = g_pd3dDevice;
-	init_info.CommandQueue = g_pd3dCommandQueue;
-	init_info.NumFramesInFlight = APP_NUM_FRAMES_IN_FLIGHT;
-	init_info.RTVFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-	init_info.DSVFormat = DXGI_FORMAT_UNKNOWN;
-	// Allocating SRV descriptors (for textures) is up to the application, so we provide callbacks.
-	// (current version of the backend will only allocate one descriptor, future versions will need to allocate more)
-	init_info.SrvDescriptorHeap = g_pd3dSrvDescHeap;
-	init_info.SrvDescriptorAllocFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_handle) { return g_pd3dSrvDescHeapAlloc.Alloc(out_cpu_handle, out_gpu_handle); };
-	init_info.SrvDescriptorFreeFn = [](ImGui_ImplDX12_InitInfo*, D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle, D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle) { return g_pd3dSrvDescHeapAlloc.Free(cpu_handle, gpu_handle); };
-	ImGui_ImplDX12_Init(&init_info);
+	client.gfxRenderer.SetupForImGui();
 
 	// Before 1.91.6: our signature was using a single descriptor. From 1.92, specifying SrvDescriptorAllocFn/SrvDescriptorFreeFn will be required to benefit from new features.
 	//ImGui_ImplDX12_Init(g_pd3dDevice, APP_NUM_FRAMES_IN_FLIGHT, DXGI_FORMAT_R8G8B8A8_UNORM, g_pd3dSrvDescHeap, g_pd3dSrvDescHeap->GetCPUDescriptorHandleForHeapStart(), g_pd3dSrvDescHeap->GetGPUDescriptorHandleForHeapStart());
@@ -118,12 +107,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			break;
 
 		// Handle window screen locked
-		if (g_SwapChainOccluded && g_pSwapChain->Present(0, DXGI_PRESENT_TEST) == DXGI_STATUS_OCCLUDED)
-		{
-			::Sleep(10);
-			continue;
-		}
-		g_SwapChainOccluded = false;
+		//if (g_SwapChainOccluded && g_pSwapChain->Present(0, DXGI_PRESENT_TEST) == DXGI_STATUS_OCCLUDED)
+		//{
+		//	::Sleep(10);
+		//	continue;
+		//}
+		//g_SwapChainOccluded = false;
 
 		// Start the Dear ImGui frame
 		ImGui_ImplDX12_NewFrame();
@@ -170,32 +159,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// Rendering
 		ImGui::Render();
 
-		FrameContext* frameCtx = WaitForNextFrameResources();
-		UINT backBufferIdx = g_pSwapChain->GetCurrentBackBufferIndex();
-		frameCtx->CommandAllocator->Reset();
-
-		D3D12_RESOURCE_BARRIER barrier = {};
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		barrier.Transition.pResource = g_mainRenderTargetResource[backBufferIdx];
-		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		g_pd3dCommandList->Reset(frameCtx->CommandAllocator, nullptr);
-		g_pd3dCommandList->ResourceBarrier(1, &barrier);
-
-		// Render Dear ImGui graphics
-		const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
-		g_pd3dCommandList->ClearRenderTargetView(g_mainRenderTargetDescriptor[backBufferIdx], clear_color_with_alpha, 0, nullptr);
-		g_pd3dCommandList->OMSetRenderTargets(1, &g_mainRenderTargetDescriptor[backBufferIdx], FALSE, nullptr);
-		g_pd3dCommandList->SetDescriptorHeaps(1, &g_pd3dSrvDescHeap);
-		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), g_pd3dCommandList);
-		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-		g_pd3dCommandList->ResourceBarrier(1, &barrier);
-		g_pd3dCommandList->Close();
-
-		g_pd3dCommandQueue->ExecuteCommandLists(1, (ID3D12CommandList* const*)&g_pd3dCommandList);
+		FrameContext* frameCtx = client.gfxRenderer.Render();
 
 		// Update and Render additional Platform Windows
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -204,15 +168,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			ImGui::RenderPlatformWindowsDefault();
 		}
 
-		// Present
-		HRESULT hr = g_pSwapChain->Present(1, 0);   // Present with vsync
-		//HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
-		g_SwapChainOccluded = (hr == DXGI_STATUS_OCCLUDED);
-
-		UINT64 fenceValue = g_fenceLastSignaledValue + 1;
-		g_pd3dCommandQueue->Signal(g_fence, fenceValue);
-		g_fenceLastSignaledValue = fenceValue;
-		frameCtx->FenceValue = fenceValue;
+		client.gfxRenderer.Present(frameCtx);
 	}
 
 	client.gfxRenderer.WaitForLastSubmittedFrame();
