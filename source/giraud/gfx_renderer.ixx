@@ -1,5 +1,5 @@
 module;
-
+#include "imgui.h"
 #include "backends/imgui_impl_dx12.h"
 #include <d3d12.h>
 #include <dxgi1_4.h>
@@ -29,51 +29,6 @@ export struct FrameContext
 	UINT64                      FenceValue;
 };
 
-// Simple free list based allocator
-struct ExampleDescriptorHeapAllocator
-{
-	ID3D12DescriptorHeap* Heap = nullptr;
-	D3D12_DESCRIPTOR_HEAP_TYPE  HeapType = D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES;
-	D3D12_CPU_DESCRIPTOR_HANDLE HeapStartCpu;
-	D3D12_GPU_DESCRIPTOR_HANDLE HeapStartGpu;
-	UINT                        HeapHandleIncrement;
-	ImVector<int>               FreeIndices;
-
-	void Create(ID3D12Device* device, ID3D12DescriptorHeap* heap)
-	{
-		IM_ASSERT(Heap == nullptr && FreeIndices.empty());
-		Heap = heap;
-		D3D12_DESCRIPTOR_HEAP_DESC desc = heap->GetDesc();
-		HeapType = desc.Type;
-		HeapStartCpu = Heap->GetCPUDescriptorHandleForHeapStart();
-		HeapStartGpu = Heap->GetGPUDescriptorHandleForHeapStart();
-		HeapHandleIncrement = device->GetDescriptorHandleIncrementSize(HeapType);
-		FreeIndices.reserve((int)desc.NumDescriptors);
-		for (int n = desc.NumDescriptors; n > 0; n--)
-			FreeIndices.push_back(n - 1);
-	}
-	void Destroy()
-	{
-		Heap = nullptr;
-		FreeIndices.clear();
-	}
-	void Alloc(D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_desc_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_desc_handle)
-	{
-		IM_ASSERT(FreeIndices.Size > 0);
-		int idx = FreeIndices.back();
-		FreeIndices.pop_back();
-		out_cpu_desc_handle->ptr = HeapStartCpu.ptr + (idx * HeapHandleIncrement);
-		out_gpu_desc_handle->ptr = HeapStartGpu.ptr + (idx * HeapHandleIncrement);
-	}
-	void Free(D3D12_CPU_DESCRIPTOR_HANDLE out_cpu_desc_handle, D3D12_GPU_DESCRIPTOR_HANDLE out_gpu_desc_handle)
-	{
-		int cpu_idx = (int)((out_cpu_desc_handle.ptr - HeapStartCpu.ptr) / HeapHandleIncrement);
-		int gpu_idx = (int)((out_gpu_desc_handle.ptr - HeapStartGpu.ptr) / HeapHandleIncrement);
-		IM_ASSERT(cpu_idx == gpu_idx);
-		FreeIndices.push_back(cpu_idx);
-	}
-};
-
 export class GfxRenderer
 {
 public:
@@ -82,7 +37,6 @@ public:
 	ID3D12Device* pd3dDevice = nullptr;
 	ID3D12DescriptorHeap* pd3dRtvDescHeap = nullptr;
 	ID3D12DescriptorHeap* pd3dSrvDescHeap = nullptr;
-	static ExampleDescriptorHeapAllocator pd3dSrvDescHeapAlloc;
 	ID3D12CommandQueue* pd3dCommandQueue = nullptr;
 	ID3D12GraphicsCommandList* pd3dCommandList = nullptr;
 	ID3D12Fence* fence = nullptr;
@@ -175,7 +129,6 @@ public:
 			desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 			if (pd3dDevice->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&pd3dSrvDescHeap)) != S_OK)
 				return false;
-			pd3dSrvDescHeapAlloc.Create(pd3dDevice, pd3dSrvDescHeap);
 		}
 
 		{
@@ -351,5 +304,3 @@ public:
 		frameCtx->FenceValue = fenceValue;
 	}
 };
-
-ExampleDescriptorHeapAllocator GfxRenderer::pd3dSrvDescHeapAlloc = {};
