@@ -1,10 +1,7 @@
 module;
-#include "imgui.h"
-#include "backends/imgui_impl_dx12.h"
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <tchar.h>
-
 #ifdef _DEBUG
 #define DX12_ENABLE_DEBUG_LAYER
 #endif
@@ -26,7 +23,8 @@ export class GfxRenderer;
 export struct FrameContext
 {
 	ID3D12CommandAllocator* CommandAllocator;
-	UINT64                      FenceValue;
+	UINT64 FenceValue;
+	UINT BackBufferIndex;
 };
 
 export class GfxRenderer
@@ -257,43 +255,41 @@ public:
 		return frameCtx;
 	}
 
-	FrameContext* Render()
+	void SetBarrier(FrameContext* frameCtx, int backBufferIdx, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After)
 	{
-		FrameContext* frameCtx = WaitForNextFrameResources();
-		UINT backBufferIdx = pSwapChain->GetCurrentBackBufferIndex();
-		frameCtx->CommandAllocator->Reset();
-
 		D3D12_RESOURCE_BARRIER barrier = {};
 		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 		barrier.Transition.pResource = mainRenderTargetResource[backBufferIdx];
 		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		barrier.Transition.StateBefore = Before;
+		barrier.Transition.StateAfter = After;
+		pd3dCommandList->ResourceBarrier(1, &barrier);
+	}
+
+	FrameContext* StartFrame(float R, float G, float B, float A)
+	{
+		FrameContext* frameCtx = WaitForNextFrameResources();
+		frameCtx->BackBufferIndex = pSwapChain->GetCurrentBackBufferIndex();
+		frameCtx->CommandAllocator->Reset();
 		pd3dCommandList->Reset(frameCtx->CommandAllocator, nullptr);
-		pd3dCommandList->ResourceBarrier(1, &barrier);
-
-		// Render Dear ImGui graphics
-
-		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-		const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
-		pd3dCommandList->ClearRenderTargetView(mainRenderTargetDescriptor[backBufferIdx], clear_color_with_alpha, 0, nullptr);
-		pd3dCommandList->OMSetRenderTargets(1, &mainRenderTargetDescriptor[backBufferIdx], FALSE, nullptr);
+		SetBarrier(frameCtx, frameCtx->BackBufferIndex, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		float color[4] = { R, G, B, A };
+		pd3dCommandList->ClearRenderTargetView(mainRenderTargetDescriptor[frameCtx->BackBufferIndex], color, 0, nullptr);
+		pd3dCommandList->OMSetRenderTargets(1, &mainRenderTargetDescriptor[frameCtx->BackBufferIndex], FALSE, nullptr);
 		pd3dCommandList->SetDescriptorHeaps(1, &pd3dSrvDescHeap);
-		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), pd3dCommandList);
-		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-		pd3dCommandList->ResourceBarrier(1, &barrier);
-		pd3dCommandList->Close();
-
-		pd3dCommandQueue->ExecuteCommandLists(1, (ID3D12CommandList* const*)&pd3dCommandList);
-	
 		return frameCtx;
+	}
+
+	void EndFrame(FrameContext* frameCtx)
+	{
+		SetBarrier(frameCtx, frameCtx->BackBufferIndex, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+		pd3dCommandList->Close();
+		pd3dCommandQueue->ExecuteCommandLists(1, (ID3D12CommandList* const*)&pd3dCommandList);
 	}
 
 	void Present(FrameContext* frameCtx)
 	{
-		// Present
 		HRESULT hr = pSwapChain->Present(1, 0);   // Present with vsync
 		//HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
 		SwapChainOccluded = (hr == DXGI_STATUS_OCCLUDED);

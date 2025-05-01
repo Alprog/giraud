@@ -109,7 +109,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		// Rendering
 		ImGui::Render();
 
-		FrameContext* frameCtx = client.gfxRenderer.Render();
+		FrameContext* frameCtx = client.gfxRenderer.StartFrame(0.45f, 0.55f, 0.60f, 1.00f);
+		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), client.gfxRenderer.pd3dCommandList);
+		client.gfxRenderer.EndFrame(frameCtx);
+
 
 		// Update and Render additional Platform Windows
 		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -127,9 +130,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
-
-	
-	
 
 	return 0;
 }
