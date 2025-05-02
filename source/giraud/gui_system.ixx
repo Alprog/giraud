@@ -2,6 +2,7 @@ module;
 #include "imgui.h"
 #include "backends/imgui_impl_win32.h"
 #include "backends/imgui_impl_dx12.h"
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 export module gui_system;
 
 import platform_window;
@@ -17,6 +18,20 @@ public:
 		InitializeConfig();
 		InitializeBackends();
     }
+
+	~GuiSystem()
+	{
+		ImGui_ImplDX12_Shutdown();
+		ImGui_ImplWin32_Shutdown();
+		ImGui::DestroyContext();
+	}
+
+	void NewFrame()
+	{
+		ImGui_ImplDX12_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+	}
 
 private:
     void InitializeConfig()
@@ -47,8 +62,11 @@ private:
 
 	void InitializeBackends()
 	{
-		// Setup Platform/Renderer backends
 		ImGui_ImplWin32_Init(platformWindow.hwnd);
+
+		platformWindow.OnMessage = [this](UINT msg, WPARAM wParam, LPARAM lParam) {
+			ImGui_ImplWin32_WndProcHandler(platformWindow.hwnd, msg, wParam, lParam);
+		};
 
 		ImGui_ImplDX12_Init(
 			gfxRenderer.pd3dDevice, 
