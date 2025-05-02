@@ -8,12 +8,10 @@ import std;
 export class PlatformWindow
 {
 public:
-	static PlatformWindow* instance;
+	static std::unordered_map<HWND, PlatformWindow*> windows;
 	
 	explicit PlatformWindow()
     {
-		instance = this;
-
 		//ImGui_ImplWin32_EnableDpiAwareness();
 		wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"Giraud", nullptr };
 		RegisterClassExW(&wc);
@@ -22,10 +20,13 @@ public:
 		// Show the window
 		ShowWindow(hwnd, SW_SHOWDEFAULT);
 		UpdateWindow(hwnd);
+
+		windows[hwnd] = this;
 	}
 
     ~PlatformWindow()
     {
+		windows.erase(hwnd);
 		DestroyWindow(hwnd);
 		UnregisterClassW(wc.lpszClassName, wc.hInstance);
     }
@@ -84,7 +85,33 @@ public:
 
 LRESULT WINAPI WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	return PlatformWindow::instance->ProcessMessage(msg, wParam, lParam);
+	auto window = PlatformWindow::windows[hwnd];
+	if (window && window->OnMessage)
+	{
+		window->OnMessage(msg, wParam, lParam);
+	}
+
+	switch (msg)
+	{
+	case WM_SIZE:
+		/*if (g_pd3dDevice != nullptr && wParam != SIZE_MINIMIZED)
+		{
+			WaitForLastSubmittedFrame();
+			CleanupRenderTarget();
+			HRESULT result = g_pSwapChain->ResizeBuffers(0, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam), DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
+			assert(SUCCEEDED(result) && "Failed to resize swapchain.");
+			CreateRenderTarget();
+		}*/
+		return 0;
+	case WM_SYSCOMMAND:
+		if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
+			return 0;
+		break;
+	case WM_DESTROY:
+		::PostQuitMessage(0);
+		return 0;
+	}
+	return ::DefWindowProcW(hwnd, msg, wParam, lParam);
 }
 
-PlatformWindow* PlatformWindow::instance = nullptr;
+std::unordered_map<HWND, PlatformWindow*> PlatformWindow::windows;
