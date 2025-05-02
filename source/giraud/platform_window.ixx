@@ -46,7 +46,7 @@ public:
 		return true;
 	}
 
-	LRESULT ProcessMessage(UINT msg, WPARAM wParam, LPARAM lParam)
+	bool ProcessMessage(UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		if (OnMessage)
 		{
@@ -55,26 +55,28 @@ public:
 
 		switch (msg)
 		{
-		case WM_SIZE:
-			/*if (g_pd3dDevice != nullptr && wParam != SIZE_MINIMIZED)
-			{
-				WaitForLastSubmittedFrame();
-				CleanupRenderTarget();
-				HRESULT result = g_pSwapChain->ResizeBuffers(0, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam), DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
-				assert(SUCCEEDED(result) && "Failed to resize swapchain.");
-				CreateRenderTarget();
-			}*/
-			return 0;
-		case WM_SYSCOMMAND:
-			if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
-				return 0;
-			break;
-		case WM_DESTROY:
-			::PostQuitMessage(0);
-			return 0;
+			case WM_SIZE:
+				/*if (g_pd3dDevice != nullptr && wParam != SIZE_MINIMIZED)
+				{
+					WaitForLastSubmittedFrame();
+					CleanupRenderTarget();
+					HRESULT result = g_pSwapChain->ResizeBuffers(0, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam), DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
+					assert(SUCCEEDED(result) && "Failed to resize swapchain.");
+					CreateRenderTarget();
+				}*/
+				return true;
+			case WM_SYSCOMMAND:
+				if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
+				{
+					return true;
+				}
+				break;
+			case WM_DESTROY:
+				PostQuitMessage(0);
+				return true;
 		}
-		return ::DefWindowProcW(hwnd, msg, wParam, lParam);
 
+		return false;
 	}
 
 	std::function<void(UINT, WPARAM, LPARAM)> OnMessage;
@@ -86,32 +88,15 @@ public:
 LRESULT WINAPI WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	auto window = PlatformWindow::windows[hwnd];
-	if (window && window->OnMessage)
+	if (window)
 	{
-		window->OnMessage(msg, wParam, lParam);
+		if (window->ProcessMessage(msg, wParam, lParam))
+		{
+			return 0;
+		}
 	}
 
-	switch (msg)
-	{
-	case WM_SIZE:
-		/*if (g_pd3dDevice != nullptr && wParam != SIZE_MINIMIZED)
-		{
-			WaitForLastSubmittedFrame();
-			CleanupRenderTarget();
-			HRESULT result = g_pSwapChain->ResizeBuffers(0, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam), DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
-			assert(SUCCEEDED(result) && "Failed to resize swapchain.");
-			CreateRenderTarget();
-		}*/
-		return 0;
-	case WM_SYSCOMMAND:
-		if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
-			return 0;
-		break;
-	case WM_DESTROY:
-		::PostQuitMessage(0);
-		return 0;
-	}
-	return ::DefWindowProcW(hwnd, msg, wParam, lParam);
+	return DefWindowProcW(hwnd, msg, wParam, lParam);
 }
 
 std::unordered_map<HWND, PlatformWindow*> PlatformWindow::windows;
