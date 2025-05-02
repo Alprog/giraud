@@ -10,6 +10,7 @@ module;
 #include <dxgidebug.h>
 #pragma comment(lib, "dxguid.lib")
 #endif
+#include "assert.h"
 export module gfx_renderer;
 
 import platform_window;
@@ -46,9 +47,17 @@ public:
 	ID3D12Resource* mainRenderTargetResource[NUM_BACK_BUFFERS] = {};
 	D3D12_CPU_DESCRIPTOR_HANDLE mainRenderTargetDescriptor[NUM_BACK_BUFFERS] = {};
 
-    explicit GfxRenderer(const PlatformWindow& window)
+    explicit GfxRenderer(PlatformWindow& window)
     {
         CreateDeviceD3D(window.hwnd);
+
+		window.OnResize = [this](UINT width, UINT height) {
+			WaitForLastSubmittedFrame();
+			CleanupRenderTarget();
+			HRESULT result = pSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
+			assert(SUCCEEDED(result) && "Failed to resize swapchain.");
+			CreateRenderTarget();
+		};
     }
 
     ~GfxRenderer()

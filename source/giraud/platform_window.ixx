@@ -1,9 +1,10 @@
 module;
 #include "windows.h"
-LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 export module platform_window;
 
 import std;
+
+LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 export class PlatformWindow
 {
@@ -56,14 +57,10 @@ public:
 		switch (msg)
 		{
 			case WM_SIZE:
-				/*if (g_pd3dDevice != nullptr && wParam != SIZE_MINIMIZED)
+				if (wParam != SIZE_MINIMIZED && OnResize)
 				{
-					WaitForLastSubmittedFrame();
-					CleanupRenderTarget();
-					HRESULT result = g_pSwapChain->ResizeBuffers(0, (UINT)LOWORD(lParam), (UINT)HIWORD(lParam), DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
-					assert(SUCCEEDED(result) && "Failed to resize swapchain.");
-					CreateRenderTarget();
-				}*/
+					OnResize((UINT)LOWORD(lParam), (UINT)HIWORD(lParam));
+				}
 				return true;
 			case WM_SYSCOMMAND:
 				if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
@@ -80,6 +77,7 @@ public:
 	}
 
 	std::function<void(UINT, WPARAM, LPARAM)> OnMessage;
+	std::function<void(UINT, UINT)> OnResize;
 
 	WNDCLASSEXW wc;
 	HWND hwnd;
