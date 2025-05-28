@@ -291,7 +291,7 @@
     <ClCompile Include="giraud\client.ixx" />
     <ClCompile Include="3rd-party\kuku_json\field.cpp" />
     <ClCompile Include="3rd-party\kuku_json\serializable.cpp" />
-    <ClCompile Include="giraud\login_panel.ixx" />
+    <ClCompile Include="giraud\user_panel.ixx" />
     <ClCompile Include="giraud\main.cpp" />
     <ClCompile Include="giraud\network.cpp" />
     <ClCompile Include="giraud\native_window.ixx" />

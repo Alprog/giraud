@@ -1,3 +1,5 @@
+module;
+#include "imgui.h"
 export module table_panel;
 
 import database_panel;
@@ -11,6 +13,5 @@ public:
 
 	void Draw() override
 	{
-
 	}
 };
