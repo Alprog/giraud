@@ -1,8 +1,8 @@
+
+#include <vector>
+#include <cctype>
 #include "field.h"
-
 #include "serializable.h"
-
-import std;
 
 namespace json
 {
@@ -13,7 +13,7 @@ namespace json
 			if (name[i] == '_')
 			{
 				name.erase(std::begin(name) + i);
-				name[i] = std::toupper(name[i]);
+				name[i] = toupper(name[i]);
 			}
 		}
 		return name;

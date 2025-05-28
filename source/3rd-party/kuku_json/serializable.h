@@ -1,10 +1,9 @@
+
 #pragma once
 
+#include <type_traits>
+#include "preprocessor/for_each.h"
 #include "object.h"
-#include "../preprocessor/for_each.h"
-
-import std;
-import is_vector;
 
 namespace json
 {
@@ -19,6 +18,8 @@ namespace json
 		virtual json::scheme& get_json_scheme() = 0;
 	};
 }
+
+#include "is_vector.h"
 
 template <typename T>
 concept vector_type = is_vector<T>::value;

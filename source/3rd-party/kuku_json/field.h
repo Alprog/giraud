@@ -1,9 +1,8 @@
 #pragma once
 
+#include <string>
+#include "object.h"
 #include "serializable.h"
-#include "json.h"
-
-import std;
 
 namespace json
 {

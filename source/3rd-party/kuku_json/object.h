@@ -1,4 +1,6 @@
-#include "json.h"
+#pragma once
+
+#include "nlohmann/json.h"
 
 namespace json
 {

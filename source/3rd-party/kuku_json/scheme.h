@@ -1,8 +1,7 @@
 #pragma once
 
+#include <vector>
 #include "field.h"
-
-import std;
 
 namespace json
 {
