@@ -269,7 +269,10 @@
     <ClCompile Include="3rd-party\imgui-docking\imgui_tables.cpp" />
     <ClCompile Include="3rd-party\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="giraud\app_panel.ixx" />
+    <ClCompile Include="giraud\configuration.ixx" />
+    <ClCompile Include="giraud\database.ixx" />
     <ClCompile Include="giraud\details_panel.ixx" />
+    <ClCompile Include="giraud\edit_api.ixx" />
     <ClCompile Include="giraud\gfx_renderer.ixx" />
     <ClCompile Include="giraud\gui_system.ixx" />
     <ClCompile Include="giraud\gui_panel.ixx" />

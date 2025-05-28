@@ -15,12 +15,14 @@ Client::Client()
 	: window{}
 	, renderer{ window }
 	, gui{ window, renderer }
-	, app{ GetPublicGiraudApp() }
+	, config{}
+	, db{}
+	, api{ config, db }
 {
-	gui.AddPanel<AppPanel>();
-	gui.AddPanel<TreePanel>();
-	gui.AddPanel<TablePanel>();
-	gui.AddPanel<DetailsPanel>();
+	gui.AddPanel<AppPanel>(db, api);
+	gui.AddPanel<TreePanel>(db, api);
+	gui.AddPanel<TablePanel>(db, api);
+	gui.AddPanel<DetailsPanel>(db, api);
 
 	gui.ShowDemoPanel();
 }

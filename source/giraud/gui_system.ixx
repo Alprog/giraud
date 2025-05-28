@@ -28,10 +28,10 @@ public:
 		ImGui::DestroyContext();
 	}
 
-	template <typename T>
-	void AddPanel()
+	template <typename TPanel, typename... TArgs>
+	void AddPanel(TArgs... Args)
 	{
-		panels.emplace_back(std::make_unique<T>());
+		panels.emplace_back(std::make_unique<TPanel>(Args...));
 	}
 
 	void ShowDemoPanel()
@@ -44,6 +44,8 @@ public:
 		ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
+
+		ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 	}
 
 	void PrepareDraw()

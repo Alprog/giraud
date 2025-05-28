@@ -3,7 +3,9 @@ export module client;
 import native_window;
 import gfx_renderer;
 import gui_system;
-import jira_app;
+import configuration;
+import database;
+import edit_api;
 
 export class Client
 {
@@ -18,5 +20,7 @@ private:
 	NativeWindow window;
 	GfxRenderer renderer;
 	GuiSystem gui;
-	JiraApp app;
+	Configuration config;
+	Database db;
+	EditAPI api;
 };
