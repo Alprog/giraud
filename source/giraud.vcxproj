@@ -268,14 +268,19 @@
     <ClCompile Include="3rd-party\imgui-docking\imgui_draw.cpp" />
     <ClCompile Include="3rd-party\imgui-docking\imgui_tables.cpp" />
     <ClCompile Include="3rd-party\imgui-docking\imgui_widgets.cpp" />
+    <ClCompile Include="giraud\app_panel.ixx" />
+    <ClCompile Include="giraud\details_panel.ixx" />
     <ClCompile Include="giraud\gfx_renderer.ixx" />
     <ClCompile Include="giraud\gui_system.ixx" />
+    <ClCompile Include="giraud\gui_panel.ixx" />
     <ClCompile Include="giraud\jira_app.ixx" />
     <ClCompile Include="giraud\client.cpp" />
     <ClCompile Include="giraud\client.ixx" />
     <ClCompile Include="giraud\main.cpp" />
     <ClCompile Include="giraud\network.cpp" />
     <ClCompile Include="giraud\native_window.ixx" />
+    <ClCompile Include="giraud\table_panel.ixx" />
+    <ClCompile Include="giraud\tree_panel.ixx" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="3rd-party\imgui-docking\LICENSE.txt" />

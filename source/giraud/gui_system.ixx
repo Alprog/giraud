@@ -5,8 +5,10 @@ module;
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 export module gui_system;
 
+import std;
 import native_window;
 import gfx_renderer;
+import gui_panel;
 
 export class GuiSystem
 {
@@ -26,9 +28,15 @@ public:
 		ImGui::DestroyContext();
 	}
 
-	void ShowDemoWindow()
+	template <typename T>
+	void AddPanel()
 	{
-		isDemoWindowShown = true;
+		panels.emplace_back(std::make_unique<T>());
+	}
+
+	void ShowDemoPanel()
+	{
+		isDemoPanelShown = true;
 	}
 
 	void NewFrame()
@@ -40,9 +48,14 @@ public:
 
 	void PrepareDraw()
 	{
-		if (isDemoWindowShown)
+		for (auto& panel : panels)
 		{
-			ImGui::ShowDemoWindow(&isDemoWindowShown);
+			panel->Render();
+		}
+
+		if (isDemoPanelShown)
+		{
+			ImGui::ShowDemoWindow(&isDemoPanelShown);
 		}
 
 		ImGui::Render();
@@ -109,5 +122,6 @@ private:
 
 	NativeWindow& nativeWindow;
 	GfxRenderer& gfxRenderer;
-	bool isDemoWindowShown = false;
+	std::vector<std::unique_ptr<GuiPanel>> panels;
+	bool isDemoPanelShown = false;
 };
