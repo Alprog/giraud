@@ -1,6 +1,7 @@
 module client;
 
 import app_panel;
+import login_panel;
 import tree_panel;
 import table_panel;
 import details_panel;
@@ -20,6 +21,7 @@ Client::Client()
 	, api{ config, db }
 {
 	gui.AddPanel<AppPanel>(config);
+	gui.AddPanel<LoginPanel>(config);
 	gui.AddPanel<TreePanel>(db, api);
 	gui.AddPanel<TablePanel>(db, api);
 	gui.AddPanel<DetailsPanel>(db, api);

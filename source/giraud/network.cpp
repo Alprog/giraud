@@ -10,9 +10,9 @@ import jira_app;
 
 void TestNetwork()
 {
-	std::wstring auth_url = L"https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=9kRa3WQXnsoGo2SS690tLszrk05tcjhx&scope=read%3Ajira-work%20write%3Ajira-work%20read%3Ajira-user&redirect_uri=https%3A%2F%2Falprog.github.io%2Fgiraud%2Fauth.html&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent";
+	std::string auth_url = "https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=9kRa3WQXnsoGo2SS690tLszrk05tcjhx&scope=read%3Ajira-work%20write%3Ajira-work%20read%3Ajira-user&redirect_uri=https%3A%2F%2Falprog.github.io%2Fgiraud%2Fauth.html&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent";
 
-	ShellExecute(0, 0, auth_url.c_str(), 0, 0, SW_SHOW);
+	ShellExecuteA(0, 0, auth_url.c_str(), 0, 0, SW_SHOW);
 
 	auto app = JiraApp();
 

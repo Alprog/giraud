@@ -282,6 +282,7 @@
     <ClCompile Include="giraud\database_panel.ixx" />
     <ClCompile Include="giraud\details_panel.ixx" />
     <ClCompile Include="giraud\edit_api.ixx" />
+    <ClCompile Include="giraud\get_params.ixx" />
     <ClCompile Include="giraud\gfx_renderer.ixx" />
     <ClCompile Include="giraud\gui_system.ixx" />
     <ClCompile Include="giraud\gui_panel.ixx" />
@@ -290,6 +291,7 @@
     <ClCompile Include="giraud\client.ixx" />
     <ClCompile Include="3rd-party\kuku_json\field.cpp" />
     <ClCompile Include="3rd-party\kuku_json\serializable.cpp" />
+    <ClCompile Include="giraud\login_panel.ixx" />
     <ClCompile Include="giraud\main.cpp" />
     <ClCompile Include="giraud\network.cpp" />
     <ClCompile Include="giraud\native_window.ixx" />

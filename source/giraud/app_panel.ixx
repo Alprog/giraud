@@ -9,7 +9,7 @@ export class AppPanel : public GuiPanel
 {
 public:
 	AppPanel(Configuration& config)
-		: configa{ config }
+		: config{ config }
 	{
 	}
 
@@ -17,7 +17,7 @@ public:
 
 	void Draw() override
 	{
-		auto& app = configa.app;
+		auto& app = config.app;
 
 		ImGui::Text(app.id.c_str());
 
@@ -25,5 +25,5 @@ public:
 
 	}
 
-	Configuration& configa;
+	Configuration& config;
 };
