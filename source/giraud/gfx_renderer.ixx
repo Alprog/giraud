@@ -226,15 +226,20 @@ public:
 			if (mainRenderTargetResource[i]) { mainRenderTargetResource[i]->Release(); mainRenderTargetResource[i] = nullptr; }
 	}
 
+	FrameContext& GetCurrentFrameContext()
+	{
+		return frameContext[frameIndex % NUM_FRAMES_IN_FLIGHT];
+	}
+
 	void WaitForLastSubmittedFrame()
 	{
-		FrameContext* frameCtx = &frameContext[frameIndex % NUM_FRAMES_IN_FLIGHT];
+		FrameContext& frameCtx = GetCurrentFrameContext();
 
-		UINT64 fenceValue = frameCtx->FenceValue;
+		UINT64 fenceValue = frameCtx.FenceValue;
 		if (fenceValue == 0)
 			return; // No fence was signaled
 
-		frameCtx->FenceValue = 0;
+		frameCtx.FenceValue = 0;
 		if (fence->GetCompletedValue() >= fenceValue)
 			return;
 
@@ -242,30 +247,26 @@ public:
 		WaitForSingleObject(fenceEvent, INFINITE);
 	}
 
-	FrameContext* WaitForNextFrameResources()
+	FrameContext& WaitForCurrentFrameResources()
 	{
-		UINT nextFrameIndex = frameIndex + 1;
-		frameIndex = nextFrameIndex;
-
 		HANDLE waitableObjects[] = { hSwapChainWaitableObject, nullptr };
 		DWORD numWaitableObjects = 1;
 
-		FrameContext* frameCtx = &frameContext[nextFrameIndex % NUM_FRAMES_IN_FLIGHT];
-		UINT64 fenceValue = frameCtx->FenceValue;
+		FrameContext& frameCtx = GetCurrentFrameContext();
+		UINT64 fenceValue = frameCtx.FenceValue;
 		if (fenceValue != 0) // means no fence was signaled
 		{
-			frameCtx->FenceValue = 0;
+			frameCtx.FenceValue = 0;
 			fence->SetEventOnCompletion(fenceValue, fenceEvent);
 			waitableObjects[1] = fenceEvent;
 			numWaitableObjects = 2;
 		}
 
 		WaitForMultipleObjects(numWaitableObjects, waitableObjects, TRUE, INFINITE);
-
 		return frameCtx;
 	}
 
-	void SetBarrier(FrameContext* frameCtx, int backBufferIdx, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After)
+	void SetBarrier(int backBufferIdx, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After)
 	{
 		D3D12_RESOURCE_BARRIER barrier = {};
 		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -277,27 +278,28 @@ public:
 		pd3dCommandList->ResourceBarrier(1, &barrier);
 	}
 
-	FrameContext* StartFrame()
+	void StartFrame()
 	{
-		FrameContext* frameCtx = WaitForNextFrameResources();
-		frameCtx->BackBufferIndex = pSwapChain->GetCurrentBackBufferIndex();
-		frameCtx->CommandAllocator->Reset();
-		pd3dCommandList->Reset(frameCtx->CommandAllocator, nullptr);
-		SetBarrier(frameCtx, frameCtx->BackBufferIndex, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-		pd3dCommandList->ClearRenderTargetView(mainRenderTargetDescriptor[frameCtx->BackBufferIndex], clearColor, 0, nullptr);
-		pd3dCommandList->OMSetRenderTargets(1, &mainRenderTargetDescriptor[frameCtx->BackBufferIndex], FALSE, nullptr);
+		frameIndex++;
+
+		FrameContext& frameCtx = WaitForCurrentFrameResources();
+		frameCtx.BackBufferIndex = pSwapChain->GetCurrentBackBufferIndex();
+		frameCtx.CommandAllocator->Reset();
+		pd3dCommandList->Reset(frameCtx.CommandAllocator, nullptr);
+		SetBarrier(frameCtx.BackBufferIndex, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		pd3dCommandList->ClearRenderTargetView(mainRenderTargetDescriptor[frameCtx.BackBufferIndex], clearColor, 0, nullptr);
+		pd3dCommandList->OMSetRenderTargets(1, &mainRenderTargetDescriptor[frameCtx.BackBufferIndex], FALSE, nullptr);
 		pd3dCommandList->SetDescriptorHeaps(1, &pd3dSrvDescHeap);
-		return frameCtx;
 	}
 
-	void EndFrame(FrameContext* frameCtx)
+	void EndFrame()
 	{
-		SetBarrier(frameCtx, frameCtx->BackBufferIndex, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+		SetBarrier(GetCurrentFrameContext().BackBufferIndex, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 		pd3dCommandList->Close();
 		pd3dCommandQueue->ExecuteCommandLists(1, (ID3D12CommandList* const*)&pd3dCommandList);
 	}
 
-	void Present(FrameContext* frameCtx)
+	void Present()
 	{
 		HRESULT hr = pSwapChain->Present(1, 0);   // Present with vsync
 		//HRESULT hr = g_pSwapChain->Present(0, 0); // Present without vsync
@@ -306,6 +308,6 @@ public:
 		UINT64 fenceValue = fenceLastSignaledValue + 1;
 		pd3dCommandQueue->Signal(fence, fenceValue);
 		fenceLastSignaledValue = fenceValue;
-		frameCtx->FenceValue = fenceValue;
+		GetCurrentFrameContext().FenceValue = fenceValue;
 	}
 };

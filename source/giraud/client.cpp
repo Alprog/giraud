@@ -8,30 +8,29 @@ Client& Client::GetInstance()
 
 Client::Client()
 	: window{}
-	, gfxRenderer{ window }
-	, guiSystem{ window, gfxRenderer }
+	, renderer{ window }
+	, gui{ window, renderer }
 {
-	guiSystem.ShowDemoWindow();
+	gui.ShowDemoWindow();
 }
 
 void Client::RunEventLoop()
 {
 	while (window.ProcessEvents())
 	{
-		guiSystem.NewFrame();
+		gui.NewFrame();
 
-		guiSystem.PrepareDraw();
+		gui.PrepareDraw();
 
-		FrameContext* frameCtx = gfxRenderer.StartFrame();
-		guiSystem.Draw();
-		gfxRenderer.EndFrame(frameCtx);
+		renderer.StartFrame();
+		gui.Draw();
+		renderer.EndFrame();
 
-		guiSystem.RenderPlatformWindows();
+		gui.RenderPlatformWindows();
 
-		gfxRenderer.Present(frameCtx);
+		renderer.Present();
 	}
 
-	gfxRenderer.WaitForLastSubmittedFrame();
-
+	renderer.WaitForLastSubmittedFrame();
 }
 

@@ -3,6 +3,7 @@ export module client;
 import native_window;
 import gfx_renderer;
 import gui_system;
+import jira_app;
 
 export class Client
 {
@@ -15,6 +16,7 @@ private:
 	Client();
 
 	NativeWindow window;
-	GfxRenderer gfxRenderer;
-	GuiSystem guiSystem;
+	GfxRenderer renderer;
+	GuiSystem gui;
+	JiraApp app;
 };
