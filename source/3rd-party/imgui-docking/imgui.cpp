@@ -16506,10 +16506,10 @@ void ImGui::UpdatePlatformWindows()
 
         // Destroy platform window if the viewport hasn't been submitted or if it is hosting a hidden window
         // (the implicit/fallback Debug##Default window will be registering its viewport then be disabled, causing a dummy DestroyPlatformWindow to be made each frame)
-        bool destroy_platform_window = false;
-        destroy_platform_window |= (viewport->LastFrameActive < g.FrameCount - 1);
-        destroy_platform_window |= (viewport->Window && !IsWindowActiveAndVisible(viewport->Window));
-        if (destroy_platform_window)
+        bool destroy_native_window = false;
+        destroy_native_window |= (viewport->LastFrameActive < g.FrameCount - 1);
+        destroy_native_window |= (viewport->Window && !IsWindowActiveAndVisible(viewport->Window));
+        if (destroy_native_window)
         {
             DestroyPlatformWindow(viewport);
             continue;
@@ -16520,8 +16520,8 @@ void ImGui::UpdatePlatformWindows()
             continue;
 
         // Create window
-        const bool is_new_platform_window = (viewport->PlatformWindowCreated == false);
-        if (is_new_platform_window)
+        const bool is_new_native_window = (viewport->PlatformWindowCreated == false);
+        if (is_new_native_window)
         {
             IMGUI_DEBUG_LOG_VIEWPORT("[viewport] Create Platform Window %08X '%s'\n", viewport->ID, viewport->Window ? viewport->Window->Name : "n/a");
             g.PlatformIO.Platform_CreateWindow(viewport);
@@ -16569,7 +16569,7 @@ void ImGui::UpdatePlatformWindows()
         if (g.PlatformIO.Platform_UpdateWindow)
             g.PlatformIO.Platform_UpdateWindow(viewport);
 
-        if (is_new_platform_window)
+        if (is_new_native_window)
         {
             // On startup ensure new platform window don't steal focus (give it a few frames, as nested contents may lead to viewport being created a few frames late)
             if (g.FrameCount < 3)

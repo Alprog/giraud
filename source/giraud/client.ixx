@@ -1,6 +1,6 @@
 export module client;
 
-import platform_window;
+import native_window;
 import gfx_renderer;
 import gui_system;
 
@@ -14,7 +14,7 @@ public:
 public:
 	Client();
 
-	PlatformWindow window;
+	NativeWindow window;
 	GfxRenderer gfxRenderer;
 	GuiSystem guiSystem;
 };

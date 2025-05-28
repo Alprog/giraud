@@ -13,7 +13,7 @@ module;
 #include "assert.h"
 export module gfx_renderer;
 
-import platform_window;
+import native_window;
 
 export constexpr const int NUM_FRAMES_IN_FLIGHT = 2;
 export constexpr const int NUM_BACK_BUFFERS = 2;
@@ -47,9 +47,9 @@ public:
 	ID3D12Resource* mainRenderTargetResource[NUM_BACK_BUFFERS] = {};
 	D3D12_CPU_DESCRIPTOR_HANDLE mainRenderTargetDescriptor[NUM_BACK_BUFFERS] = {};
 
-    explicit GfxRenderer(PlatformWindow& window)
-    {
-        CreateDeviceD3D(window.hwnd);
+	explicit GfxRenderer(NativeWindow& window)
+	{
+		CreateDeviceD3D(window.hwnd);
 
 		window.OnResize = [this](UINT width, UINT height) {
 			WaitForLastSubmittedFrame();
@@ -57,13 +57,13 @@ public:
 			HRESULT result = pSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT);
 			assert(SUCCEEDED(result) && "Failed to resize swapchain.");
 			CreateRenderTarget();
-		};
-    }
+			};
+	}
 
-    ~GfxRenderer()
-    {
+	~GfxRenderer()
+	{
 		CleanupDeviceD3D();
-    }
+	}
 
 	bool CreateDeviceD3D(HWND hWnd)
 	{

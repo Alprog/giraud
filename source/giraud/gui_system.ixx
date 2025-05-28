@@ -5,19 +5,19 @@ module;
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 export module gui_system;
 
-import platform_window;
+import native_window;
 import gfx_renderer;
 
 export class GuiSystem
 {
 public:
-    explicit GuiSystem(PlatformWindow& platformWindow, GfxRenderer& gfxRenderer)
-        : platformWindow{ platformWindow }
-        , gfxRenderer{ gfxRenderer }
-    {
+	explicit GuiSystem(NativeWindow& nativeWindow, GfxRenderer& gfxRenderer)
+		: nativeWindow{ nativeWindow }
+		, gfxRenderer{ gfxRenderer }
+	{
 		InitializeConfig();
 		InitializeBackends();
-    }
+	}
 
 	~GuiSystem()
 	{
@@ -34,8 +34,8 @@ public:
 	}
 
 private:
-    void InitializeConfig()
-    {
+	void InitializeConfig()
+	{
 		// Setup Dear ImGui context
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -58,26 +58,26 @@ private:
 			style.WindowRounding = 0.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
-    }
+	}
 
 	void InitializeBackends()
 	{
-		ImGui_ImplWin32_Init(platformWindow.hwnd);
+		ImGui_ImplWin32_Init(nativeWindow.hwnd);
 
-		platformWindow.OnMessage = [this](UINT msg, WPARAM wParam, LPARAM lParam) {
-			ImGui_ImplWin32_WndProcHandler(platformWindow.hwnd, msg, wParam, lParam);
-		};
+		nativeWindow.OnMessage = [this](UINT msg, WPARAM wParam, LPARAM lParam) {
+			ImGui_ImplWin32_WndProcHandler(nativeWindow.hwnd, msg, wParam, lParam);
+			};
 
 		ImGui_ImplDX12_Init(
-			gfxRenderer.pd3dDevice, 
-			NUM_FRAMES_IN_FLIGHT, 
+			gfxRenderer.pd3dDevice,
+			NUM_FRAMES_IN_FLIGHT,
 			DXGI_FORMAT_R8G8B8A8_UNORM,
-			gfxRenderer.pd3dSrvDescHeap, 
-			gfxRenderer.pd3dSrvDescHeap->GetCPUDescriptorHandleForHeapStart(), 
+			gfxRenderer.pd3dSrvDescHeap,
+			gfxRenderer.pd3dSrvDescHeap->GetCPUDescriptorHandleForHeapStart(),
 			gfxRenderer.pd3dSrvDescHeap->GetGPUDescriptorHandleForHeapStart()
 		);
 	}
 
-    PlatformWindow& platformWindow;
-    GfxRenderer& gfxRenderer;
+	NativeWindow& nativeWindow;
+	GfxRenderer& gfxRenderer;
 };
