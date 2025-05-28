@@ -26,11 +26,40 @@ public:
 		ImGui::DestroyContext();
 	}
 
+	void ShowDemoWindow()
+	{
+		isDemoWindowShown = true;
+	}
+
 	void NewFrame()
 	{
 		ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
+	}
+
+	void PrepareDraw()
+	{
+		if (isDemoWindowShown)
+		{
+			ImGui::ShowDemoWindow(&isDemoWindowShown);
+		}
+
+		ImGui::Render();
+	}
+
+	void Draw()
+	{
+		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), gfxRenderer.pd3dCommandList);
+	}
+
+	void RenderPlatformWindows()
+	{
+		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
 	}
 
 private:
@@ -80,4 +109,5 @@ private:
 
 	NativeWindow& nativeWindow;
 	GfxRenderer& gfxRenderer;
+	bool isDemoWindowShown = false;
 };

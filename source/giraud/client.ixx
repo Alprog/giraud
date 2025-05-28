@@ -11,7 +11,7 @@ public:
 
 	void RunEventLoop();
 
-public:
+private:
 	Client();
 
 	NativeWindow window;

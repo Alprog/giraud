@@ -46,6 +46,7 @@ public:
 	HANDLE hSwapChainWaitableObject = nullptr;
 	ID3D12Resource* mainRenderTargetResource[NUM_BACK_BUFFERS] = {};
 	D3D12_CPU_DESCRIPTOR_HANDLE mainRenderTargetDescriptor[NUM_BACK_BUFFERS] = {};
+	float clearColor[4] = { 0.45f, 0.55f, 0.60f, 1.00f };
 
 	explicit GfxRenderer(NativeWindow& window)
 	{
@@ -276,15 +277,14 @@ public:
 		pd3dCommandList->ResourceBarrier(1, &barrier);
 	}
 
-	FrameContext* StartFrame(float R, float G, float B, float A)
+	FrameContext* StartFrame()
 	{
 		FrameContext* frameCtx = WaitForNextFrameResources();
 		frameCtx->BackBufferIndex = pSwapChain->GetCurrentBackBufferIndex();
 		frameCtx->CommandAllocator->Reset();
 		pd3dCommandList->Reset(frameCtx->CommandAllocator, nullptr);
 		SetBarrier(frameCtx, frameCtx->BackBufferIndex, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-		float color[4] = { R, G, B, A };
-		pd3dCommandList->ClearRenderTargetView(mainRenderTargetDescriptor[frameCtx->BackBufferIndex], color, 0, nullptr);
+		pd3dCommandList->ClearRenderTargetView(mainRenderTargetDescriptor[frameCtx->BackBufferIndex], clearColor, 0, nullptr);
 		pd3dCommandList->OMSetRenderTargets(1, &mainRenderTargetDescriptor[frameCtx->BackBufferIndex], FALSE, nullptr);
 		pd3dCommandList->SetDescriptorHeaps(1, &pd3dSrvDescHeap);
 		return frameCtx;
