@@ -1,11 +1,11 @@
 export module details_panel;
 
-import gui_panel;
+import database_panel;
 
-export class DetailsPanel : public GuiPanel
+export class DetailsPanel : public DatabasePanel
 {
 public:
-	using GuiPanel::GuiPanel;
+	using DatabasePanel::DatabasePanel;
 
 	std::string GetName() const override { return "DetailsPanel"; }
 

@@ -19,7 +19,7 @@ Client::Client()
 	, db{}
 	, api{ config, db }
 {
-	gui.AddPanel<AppPanel>(db, api);
+	gui.AddPanel<AppPanel>(config);
 	gui.AddPanel<TreePanel>(db, api);
 	gui.AddPanel<TablePanel>(db, api);
 	gui.AddPanel<DetailsPanel>(db, api);

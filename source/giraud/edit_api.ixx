@@ -12,6 +12,9 @@ public:
 	{
 	}
 
+	const Configuration& GetConfig() const { return config; }
+	const Database& GetDatabase() const { return database; }
+
 private:
 	Configuration& config;
 	Database& database;

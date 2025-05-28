@@ -271,6 +271,7 @@
     <ClCompile Include="giraud\app_panel.ixx" />
     <ClCompile Include="giraud\configuration.ixx" />
     <ClCompile Include="giraud\database.ixx" />
+    <ClCompile Include="giraud\database_panel.ixx" />
     <ClCompile Include="giraud\details_panel.ixx" />
     <ClCompile Include="giraud\edit_api.ixx" />
     <ClCompile Include="giraud\gfx_renderer.ixx" />

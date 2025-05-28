@@ -1,11 +1,11 @@
 export module tree_panel;
 
-import gui_panel;
+import database_panel;
 
-export class TreePanel : public GuiPanel
+export class TreePanel : public DatabasePanel
 {
 public:
-	using GuiPanel::GuiPanel;
+	using DatabasePanel::DatabasePanel;
 
 	std::string GetName() const override { return "TreePanel"; }
 

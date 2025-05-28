@@ -29,9 +29,9 @@ public:
 	}
 
 	template <typename TPanel, typename... TArgs>
-	void AddPanel(TArgs... Args)
+	void AddPanel(TArgs&&... Args)
 	{
-		panels.emplace_back(std::make_unique<TPanel>(Args...));
+		panels.emplace_back(std::make_unique<TPanel>(std::forward<TArgs>(Args)...));
 	}
 
 	void ShowDemoPanel()
