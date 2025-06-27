@@ -270,6 +270,7 @@
     <ClInclude Include="3rd-party\kuku_json\serializable.h" />
     <ClInclude Include="3rd-party\kuku_json\preprocessor\common.h" />
     <ClInclude Include="3rd-party\kuku_json\preprocessor\for_each.h" />
+    <ClInclude Include="giraud\kuku_json.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3rd-party\imgui-docking\backends\imgui_impl_dx12.cpp" />
@@ -280,6 +281,7 @@
     <ClCompile Include="3rd-party\imgui-docking\imgui_tables.cpp" />
     <ClCompile Include="3rd-party\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="3rd-party\imgui-docking\misc\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="giraud\json.ixx" />
     <ClCompile Include="giraud\network.ixx" />
     <ClCompile Include="giraud\panels\app_panel.ixx" />
     <ClCompile Include="giraud\configuration.ixx" />

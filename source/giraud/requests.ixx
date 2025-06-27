@@ -1,9 +1,9 @@
 module;
-#include "kuku_json/serializable.h"
-#include "kuku_json/scheme.h"
+#include "kuku_json.h"
 export module requests;
 
 import std;
+export import json;
 
 export struct TokenRequest : public json::serializable
 {

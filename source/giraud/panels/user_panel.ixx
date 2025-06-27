@@ -3,7 +3,6 @@ module;
 #include "misc/cpp/imgui_stdlib.h"
 #include <windows.h>
 #include <shellapi.h>
-#include "nlohmann/json.h"
 export module user_panel;
 
 import database_panel;

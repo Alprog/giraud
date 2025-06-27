@@ -1,5 +1,3 @@
-module;
-#include "nlohmann/json.h"
 module client;
 
 import app_panel;

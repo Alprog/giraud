@@ -1,9 +1,12 @@
+module;
+#include "kuku_json.h"
 export module jira_app;
 
 import std;
 import get_uri;
+export import json;
 
-export struct JiraApp
+export struct JiraApp : public json::serializable
 {
 	std::string id;
 	std::string secret;
@@ -21,6 +24,8 @@ export struct JiraApp
 		uri.AddParam("prompt", "consent");
 		return uri.BuildFullUrl();
 	}
+
+	JSCHEME(id, secret, redirect_uri)
 };
 
 export JiraApp GetPublicGiraudApp()
