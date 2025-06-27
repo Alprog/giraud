@@ -278,27 +278,27 @@
     <ClCompile Include="3rd-party\imgui-docking\imgui_tables.cpp" />
     <ClCompile Include="3rd-party\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="3rd-party\imgui-docking\misc\cpp\imgui_stdlib.cpp" />
-    <ClCompile Include="giraud\app_panel.ixx" />
+    <ClCompile Include="giraud\panels\app_panel.ixx" />
     <ClCompile Include="giraud\configuration.ixx" />
     <ClCompile Include="giraud\database.ixx" />
-    <ClCompile Include="giraud\database_panel.ixx" />
-    <ClCompile Include="giraud\details_panel.ixx" />
+    <ClCompile Include="giraud\panels\database_panel.ixx" />
+    <ClCompile Include="giraud\panels\details_panel.ixx" />
     <ClCompile Include="giraud\edit_api.ixx" />
     <ClCompile Include="giraud\get_params.ixx" />
     <ClCompile Include="giraud\gfx_renderer.ixx" />
     <ClCompile Include="giraud\gui_system.ixx" />
-    <ClCompile Include="giraud\gui_panel.ixx" />
+    <ClCompile Include="giraud\panels\gui_panel.ixx" />
     <ClCompile Include="giraud\jira_app.ixx" />
     <ClCompile Include="giraud\client.cpp" />
     <ClCompile Include="giraud\client.ixx" />
     <ClCompile Include="3rd-party\kuku_json\field.cpp" />
     <ClCompile Include="3rd-party\kuku_json\serializable.cpp" />
-    <ClCompile Include="giraud\user_panel.ixx" />
+    <ClCompile Include="giraud\panels\user_panel.ixx" />
     <ClCompile Include="giraud\main.cpp" />
     <ClCompile Include="giraud\network.cpp" />
     <ClCompile Include="giraud\native_window.ixx" />
-    <ClCompile Include="giraud\table_panel.ixx" />
-    <ClCompile Include="giraud\tree_panel.ixx" />
+    <ClCompile Include="giraud\panels\table_panel.ixx" />
+    <ClCompile Include="giraud\panels\tree_panel.ixx" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="3rd-party\imgui-docking\LICENSE.txt" />
