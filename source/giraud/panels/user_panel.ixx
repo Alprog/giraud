@@ -23,7 +23,7 @@ public:
 
 	void Draw() override
 	{
-		if (config.user.token.empty())
+		if (config.accessToken.empty())
 		{
 			if (ImGui::Button("Login"))
 			{
@@ -36,10 +36,10 @@ public:
 		}
 		else
 		{
-			ImGui::Text(config.user.token.c_str());
+			ImGui::Text(config.accessToken.c_str());
 			if (ImGui::Button("Logout"))
 			{
-				config.user = {};
+				config.accessToken = {};
 			}
 		}
 
@@ -79,7 +79,7 @@ public:
 				request.redirect_uri = config.app.redirect_uri;
 
 				TokenResponse response = network.Post(request);
-				config.user.token = response.access_token;
+				config.accessToken = response.access_token;
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Cancel", ImVec2(220, 0)))

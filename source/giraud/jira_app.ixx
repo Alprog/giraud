@@ -25,6 +25,8 @@ export struct JiraApp : public json::serializable
 		return uri.BuildFullUrl();
 	}
 
+	//JiraApp& operator=(const JiraApp& config) = default;
+
 	JSCHEME(id, secret, redirect_uri)
 };
 

@@ -1,4 +1,5 @@
 module;
+#include "nlohmann/json.h"
 #include "kuku_json.h"
 export module network;
 

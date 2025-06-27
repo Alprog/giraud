@@ -283,7 +283,7 @@
     <ClCompile Include="3rd-party\imgui-docking\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="giraud\json.ixx" />
     <ClCompile Include="giraud\network.ixx" />
-    <ClCompile Include="giraud\panels\app_panel.ixx" />
+    <ClCompile Include="giraud\panels\config_panel.ixx" />
     <ClCompile Include="giraud\configuration.ixx" />
     <ClCompile Include="giraud\database.ixx" />
     <ClCompile Include="giraud\panels\database_panel.ixx" />
