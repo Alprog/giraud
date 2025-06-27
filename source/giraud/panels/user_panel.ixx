@@ -8,7 +8,6 @@ export module user_panel;
 import database_panel;
 import configuration;
 import network;
-import requests;
 
 export class UserPanel : public GuiPanel
 {
@@ -23,7 +22,7 @@ public:
 
 	void Draw() override
 	{
-		if (config.accessToken.empty())
+		if (!network.GetSession().IsLogined())
 		{
 			if (ImGui::Button("Login"))
 			{
@@ -36,10 +35,10 @@ public:
 		}
 		else
 		{
-			ImGui::Text(config.accessToken.c_str());
+			ImGui::Text(network.GetSession().accessToken.c_str());
 			if (ImGui::Button("Logout"))
 			{
-				config.accessToken = {};
+				network.Logout();
 			}
 		}
 
@@ -71,15 +70,7 @@ public:
 				ImGui::CloseCurrentPopup();
 				flatten(codeString);
 
-				TokenRequest request;
-				request.grant_type = "authorization_code";
-				request.client_id = config.app.id;
-				request.client_secret = config.app.secret;
-				request.code = codeString;
-				request.redirect_uri = config.app.redirect_uri;
-
-				TokenResponse response = network.Post(request);
-				config.accessToken = response.access_token;
+				network.Login(codeString);
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Cancel", ImVec2(220, 0)))

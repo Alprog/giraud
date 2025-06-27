@@ -2,20 +2,22 @@ export module edit_api;
 
 import configuration;
 import database;
+import network;
 
 export class EditAPI
 {
 public:
-	EditAPI(Configuration& config, Database& database)
-		: config{ config }
-		, database{ database }
+	EditAPI(Database& database, Network& network)
+		: database{ database }
+		, network{ network }
 	{
 	}
 
-	const Configuration& GetConfig() const { return config; }
+	const Configuration& GetConfig() const { return network.GetConfig(); }
 	const Database& GetDatabase() const { return database; }
+	const Network& GetNetwork() const { return network; }
 
 private:
-	Configuration& config;
 	Database& database;
+	Network& network;
 };

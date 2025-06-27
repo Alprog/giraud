@@ -18,11 +18,8 @@ public:
 		}
 	}
 
-	//Configuration& operator=(const Configuration& config) = default;
-
 	JiraApp app;
 	std::string domain;
-	std::string accessToken;
 
-	JSCHEME(app, domain, accessToken);
+	JSCHEME(app, domain);
 };

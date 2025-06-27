@@ -17,9 +17,9 @@ Client::Client()
 	, renderer{ window }
 	, gui{ window, renderer }
 	, config{}
-	, network{ network }
+	, network{ config }
 	, db{}
-	, api{ config, db }
+	, api{ db, network }
 {
 	config.load();
 
