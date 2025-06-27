@@ -10,7 +10,7 @@ namespace json
 	{
 	public:
 		base_field(std::string field_name)
-			: field_name{ snake_case_to_camel_case(field_name) }
+			: field_name{ field_name }
 		{
 		}
 

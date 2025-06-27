@@ -4,6 +4,7 @@ import native_window;
 import gfx_renderer;
 import gui_system;
 import configuration;
+import network;
 import database;
 import edit_api;
 
@@ -21,6 +22,7 @@ private:
 	GfxRenderer renderer;
 	GuiSystem gui;
 	Configuration config;
+	Network network;
 	Database db;
 	EditAPI api;
 };

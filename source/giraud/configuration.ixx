@@ -1,6 +1,7 @@
 export module configuration;
 
 import jira_app;
+import user;
 
 export class Configuration
 {
@@ -11,4 +12,5 @@ public:
 	}
 
 	JiraApp app;
+	User user;
 };

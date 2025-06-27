@@ -1,3 +1,5 @@
+module;
+#include "nlohmann/json.h"
 module client;
 
 import app_panel;
@@ -17,16 +19,17 @@ Client::Client()
 	, renderer{ window }
 	, gui{ window, renderer }
 	, config{}
+	, network{ network }
 	, db{}
 	, api{ config, db }
 {
 	gui.AddPanel<AppPanel>(config);
-	gui.AddPanel<UserPanel>(config);
+	gui.AddPanel<UserPanel>(config, network);
 	gui.AddPanel<TreePanel>(db, api);
 	gui.AddPanel<TablePanel>(db, api);
 	gui.AddPanel<DetailsPanel>(db, api);
 
-	gui.ShowDemoPanel();
+	//gui.ShowDemoPanel();
 }
 
 void Client::RunEventLoop()
