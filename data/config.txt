@@ -4,6 +4,5 @@
 		"secret": "",
 		"redirect_uri": "https://alprog.github.io/giraud/auth.html"
 	},
-	"domain": "https://your-domain.atlassian.net",
-	"accessToken": ""
+	"domain": "https://your-domain.atlassian.net"
 }

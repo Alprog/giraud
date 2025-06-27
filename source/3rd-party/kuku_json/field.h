@@ -66,7 +66,10 @@ namespace json
 
 		virtual void deserialize(json::object& object, void* instance) override
 		{
-			static_cast<Class_type*>(instance)->*member = from_json<Field_type>(object[field_name]);
+			if (object.contains(field_name))
+			{
+				static_cast<Class_type*>(instance)->*member = from_json<Field_type>(object[field_name]);
+			}
 		}
 	};
 }

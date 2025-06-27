@@ -1,5 +1,4 @@
 module;
-#include "nlohmann/json.h"
 #include "kuku_json.h"
 export module configuration;
 
@@ -10,20 +9,13 @@ import std;
 export class Configuration : public json::serializable
 {
 public:
-	Configuration()
-	{
-	}
-
 	void load()
 	{
-		json::loadFromFile(*this, "config.txt");
-
-		std::ifstream stream("config.txt");
-		std::ostringstream ss;
-		ss << stream.rdbuf();
-		std::string text = ss.str();
-		nlohmann::json json = nlohmann::json::parse(text);
-		*this = from_json<Configuration>(json);
+		*this = json::loadFromFile<Configuration>("config.txt");
+		if (!app.IsValid())
+		{
+			app = GetPublicGiraudApp();
+		}
 	}
 
 	//Configuration& operator=(const Configuration& config) = default;

@@ -179,6 +179,7 @@
     <ClInclude Include="3rd-party\imgui-docking\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="3rd-party\kuku_json\field.h" />
     <ClInclude Include="3rd-party\kuku_json\is_vector.h" />
+    <ClInclude Include="3rd-party\kuku_json\utils.h" />
     <ClInclude Include="3rd-party\nlohmann\json.h" />
     <ClInclude Include="3rd-party\SDL3-3.2.10\include\SDL3\SDL.h" />
     <ClInclude Include="3rd-party\SDL3-3.2.10\include\SDL3\SDL_assert.h" />
@@ -281,6 +282,7 @@
     <ClCompile Include="3rd-party\imgui-docking\imgui_tables.cpp" />
     <ClCompile Include="3rd-party\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="3rd-party\imgui-docking\misc\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="3rd-party\kuku_json\utils.cpp" />
     <ClCompile Include="giraud\json.ixx" />
     <ClCompile Include="giraud\network.ixx" />
     <ClCompile Include="giraud\panels\config_panel.ixx" />

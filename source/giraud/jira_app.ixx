@@ -12,6 +12,11 @@ export struct JiraApp : public json::serializable
 	std::string secret;
 	std::string redirect_uri;
 
+	bool IsValid()
+	{
+		return !id.empty() && !secret.empty();
+	}
+
 	std::string getAuthUrl()
 	{
 		GetUri uri("https://auth.atlassian.com/authorize");
@@ -24,8 +29,6 @@ export struct JiraApp : public json::serializable
 		uri.AddParam("prompt", "consent");
 		return uri.BuildFullUrl();
 	}
-
-	//JiraApp& operator=(const JiraApp& config) = default;
 
 	JSCHEME(id, secret, redirect_uri)
 };
